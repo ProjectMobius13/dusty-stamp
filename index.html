@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>Pony Export Tools</title>
+  <title>Dusty Stamp</title>
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
     :root {
@@ -205,6 +205,52 @@
       color: #140800;
       text-shadow: none;
     }
+    .chk {
+      display: inline-block;
+      width: 1.6rem;
+      margin-right: .35rem;
+      border: 1px solid var(--line);
+      background: #090400;
+      color: var(--ink);
+      text-align: center;
+      font: inherit;
+      font-weight: 700;
+      padding: 0 .15rem;
+      cursor: pointer;
+      text-transform: none;
+      letter-spacing: 0;
+      line-height: 1.35;
+    }
+    .chk.on { border-color: var(--ink); }
+    .field-head { display: flex; align-items: center; margin-bottom: .25rem; }
+    .field-head span { margin-bottom: 0 !important; }
+    .conflict-row {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: .45rem;
+      align-items: center;
+      padding: .4rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: .88rem;
+    }
+    .conflict-row:last-child { border-bottom: 0; }
+    .conflict-row .name { color: var(--ink); }
+    .radio {
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink-dim);
+      font: inherit;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      padding: .25rem .45rem;
+      cursor: pointer;
+    }
+    .radio.on {
+      background: var(--ink);
+      color: #140800;
+      border-color: var(--line);
+    }
     footer.bar {
       position: fixed; left: 0; right: 0; bottom: 0;
       padding: .6rem 1rem calc(.6rem + env(safe-area-inset-bottom));
@@ -230,47 +276,51 @@
 <body>
   <header>
     <h1>PONY.SYS // DUSTY STAMP</h1>
-    <p class="sub">BIO READY. OUTFIT READY. STAMP READY.</p>
+    <p class="sub">BIO STAMP READY. OUTFIT STAMP READY.</p>
   </header>
   <main>
     <div class="tabs">
       <button type="button" class="on" data-tab="edit">BIO</button>
-      <button type="button" data-tab="stamp">STAMP</button>
       <button type="button" data-tab="outfit">OUTFIT</button>
     </div>
     <p class="status" id="status">WAITING FOR INPUT.</p>
 
     <section id="tab-edit">
-      <div class="drop" id="drop-edit" data-slot="edit">Drop an export here
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload<input id="file-edit" type="file" accept=".txt,text/plain"></label></div>
+      <div class="drop" id="drop-edit" data-slot="edit">Optional: load a bio donor to edit
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload donor<input id="file-edit" type="file" accept=".txt,text/plain"></label></div>
         <p class="list" id="list-edit"></p>
       </div>
       <div class="field hidden" id="pickerWrap">
-        <span>Character in file</span>
+        <span>Character in donor</span>
         <div class="term-select" id="picker">
           <button type="button" class="term-select-btn" id="pickerBtn">SELECT</button>
           <div class="term-menu" id="pickerMenu"></div>
         </div>
       </div>
-      <div id="editor" class="hidden">
+      <div id="editor">
+        <p class="sub">Checked fields write onto stamp targets. Name/tags default off. No targets = edit donor only.</p>
         <div class="card">
-          <label class="field"><span>Name</span><input id="name" type="text" maxlength="32"></label>
-          <label class="field"><span>Tags / description</span><input id="tags" type="text" placeholder="@0 #oc"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk" data-check="name"></button><span>Name</span></div><input id="name" type="text" maxlength="32"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk" data-check="tags"></button><span>Tags / description</span></div><input id="tags" type="text" placeholder="@0 #oc"></label>
         </div>
         <div class="card">
-          <label class="field"><span>Race</span><input id="race" type="text"></label>
-          <label class="field"><span>Faction</span><input id="faction" type="text"></label>
-          <label class="field"><span>Profession</span><input id="profession" type="text"></label>
-          <label class="field"><span>Hometown</span><input id="hometown" type="text"></label>
-          <label class="field"><span>Description</span><textarea id="description"></textarea></label>
-          <label class="field"><span>Traits</span><textarea id="traits"></textarea></label>
-          <label class="field"><span>History</span><textarea id="history"></textarea></label>
-          <label class="field"><span>Age</span><input id="age" type="number" min="0" max="255"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="race">X</button><span>Race</span></div><input id="race" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="faction">X</button><span>Faction</span></div><input id="faction" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="profession">X</button><span>Profession</span></div><input id="profession" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="hometown">X</button><span>Hometown</span></div><input id="hometown" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="description">X</button><span>Description</span></div><textarea id="description"></textarea></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="traits">X</button><span>Traits</span></div><textarea id="traits"></textarea></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="history">X</button><span>History</span></div><textarea id="history"></textarea></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="age">X</button><span>Age</span></div><input id="age" type="number" min="0" max="255"></label>
         </div>
         <div class="card">
-          <span class="special-title">SPECIAL (1-10)</span>
+          <div class="field-head"><button type="button" class="chk on" data-check="special">X</button><span class="special-title">SPECIAL (1-10)</span></div>
           <div class="special" id="special"></div>
         </div>
+      </div>
+      <div class="drop" id="drop-stamp-bases" data-slot="stampBases">Stamp onto these characters (one or many files)
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload bases<input id="file-stamp-bases" type="file" accept=".txt,text/plain" multiple></label></div>
+        <p class="list" id="list-stamp-bases"></p>
       </div>
     </section>
 
@@ -283,17 +333,17 @@
         <div style="margin-top:.6rem;"><label class="file-btn">Upload outfit<input id="file-outfit" type="file" accept=".txt,text/plain"></label></div>
         <p class="list" id="list-outfit"></p>
       </div>
-    </section>
-
-    <section id="tab-stamp" class="hidden">
-      <p class="sub">Uses the bio in Edit bio, or a donor file if you upload one.</p>
-      <div class="drop" id="drop-stamp-bases" data-slot="stampBases">Characters to stamp
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload bases<input id="file-stamp-bases" type="file" accept=".txt,text/plain" multiple></label></div>
-        <p class="list" id="list-stamp-bases"></p>
+      <div class="field hidden" id="outfitPickerWrap">
+        <span>Base character</span>
+        <div class="term-select" id="outfitPicker">
+          <button type="button" class="term-select-btn" id="outfitPickerBtn">SELECT</button>
+          <div class="term-menu" id="outfitPickerMenu"></div>
+        </div>
       </div>
-      <div class="drop" id="drop-stamp-bio" data-slot="stampBio">Optional bio donor
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload donor<input id="file-stamp-bio" type="file" accept=".txt,text/plain"></label></div>
-        <p class="list" id="list-stamp-bio"></p>
+      <div class="card hidden" id="conflictCard">
+        <span class="special-title">SLOT CONFLICTS</span>
+        <p class="sub">Base occupies this slot. Outfit default wins.</p>
+        <div id="conflictList"></div>
       </div>
     </section>
   </main>
