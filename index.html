@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Pony Export Tools</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+    :root {
+      --bg: #050200;
+      --panel: #100800;
+      --ink: #ffb000;
+      --ink-dim: #c47a00;
+      --glow: #ffbf40;
+      --ok: #ffd27a;
+      --danger: #ff6a2a;
+      --line: #7a4a00;
+    }
+    * { box-sizing: border-box; }
+    html { overflow-y: scroll; scrollbar-color: #c47a00 #090400; }
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #090400; }
+    ::-webkit-scrollbar-thumb {
+      background: #7a4a00;
+      border: 1px solid #ffb000;
+    }
+    ::-webkit-scrollbar-thumb:hover { background: #c47a00; }
+    ::-webkit-scrollbar-corner { background: #090400; }
+    html, body { min-height: 100%; }
+    body {
+      margin: 0;
+      font-family: "Share Tech Mono", ui-monospace, Menlo, Consolas, monospace;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.45;
+      text-shadow: none;
+    }
+    body::before {
+      content: "";
+      pointer-events: none;
+      position: fixed; inset: 0;
+      background:
+        linear-gradient(180deg, rgba(255,180,40,0.05), transparent 12%, transparent 88%, rgba(0,0,0,0.35)),
+        radial-gradient(ellipse at center, rgba(255,140,0,0.07), transparent 70%),
+        repeating-linear-gradient(0deg, rgba(0,0,0,0.22) 0 2px, transparent 2px 4px);
+      background-attachment: fixed;
+      z-index: 0;
+    }
+    header, main, footer.bar { position: relative; z-index: 1; }
+    header { padding: 1rem 1rem .35rem; max-width: 42rem; margin: 0 auto; }
+    h1 {
+      font-size: 1.05rem;
+      margin: 0 0 .35rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+    }
+    h1::before { content: "> "; }
+    p.sub { margin: 0; color: var(--ink-dim); font-size: .85rem; }
+    main { padding: .5rem 1rem 6.5rem; max-width: 42rem; margin: 0 auto; }
+    .tabs { display: flex; gap: .4rem; margin: .75rem 0; }
+    .tabs button {
+      flex: 1; border: 1px solid var(--line); border-radius: 0;
+      padding: .55rem .3rem; background: transparent; color: var(--ink-dim);
+      font: inherit; font-weight: 700; letter-spacing: .04em; cursor: pointer;
+      text-shadow: none;
+    }
+    .tabs button.on {
+      background: var(--ink); color: #140800;
+      box-shadow: 0 0 12px rgba(255,176,0,.45);
+    }
+    button, .file-btn {
+      appearance: none; border: 1px solid var(--ink); border-radius: 0;
+      padding: .7rem .95rem; font: inherit; font-weight: 700; letter-spacing: .06em;
+      cursor: pointer; background: transparent; color: var(--ink);
+      text-transform: uppercase;
+    }
+    button:hover, .file-btn:hover { background: rgba(255,176,0,.12); }
+    button:disabled { opacity: .35; cursor: not-allowed; box-shadow: none; }
+    .file-btn { display: inline-block; }
+    input[type=file] { display: none; }
+    .drop {
+      border: 1px dashed var(--line); border-radius: 0; padding: 1rem;
+      text-align: center; color: var(--ink-dim); margin: .5rem 0;
+      background: rgba(16,8,0,.65);
+    }
+    .drop.over { border-color: var(--ink); color: var(--ink); box-shadow: inset 0 0 18px rgba(255,176,0,.15); }
+    label.field { display: block; margin: .65rem 0; }
+    label.field span { display: block; color: var(--ink-dim); font-size: .78rem; margin-bottom: .25rem; letter-spacing: .08em; text-transform: uppercase; }
+        input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+    input[type=text], input[type=number], textarea, select {
+      width: 100%; padding: .65rem .7rem; border-radius: 0;
+      border: 1px solid var(--line); background: #090400; color: var(--ink);
+      font: inherit; caret-color: var(--glow);
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--ink);
+      box-shadow: 0 0 0 1px var(--ink);
+    }
+    textarea { min-height: 4.2rem; resize: vertical; }
+    .card {
+      background: rgba(16,8,0,.72);
+      border: 1px solid var(--line);
+      border-radius: 0;
+      padding: .9rem;
+      margin: .75rem 0;
+    }
+    .special-title {
+      display: block;
+      color: var(--ink);
+      font-size: .8rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      text-shadow: 0 0 8px rgba(255,176,0,.55);
+      margin-bottom: .5rem;
+    }
+    .special { display: grid; grid-template-columns: 7.2rem 1fr 2rem; gap: .35rem .6rem; align-items: center; }
+    .special label { color: var(--ink-dim); font-size: .85rem; }
+    input[type=range] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 8px;
+      background: #090400;
+      border: 1px solid var(--line);
+      outline: none;
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      height: 6px; background: #090400;
+      border: 1px solid var(--line);
+    }
+    input[type=range]::-moz-range-track {
+      height: 6px; background: #090400;
+      border: 1px solid var(--line);
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 10px; height: 18px; margin-top: -7px;
+      background: var(--ink); border: 1px solid #140800;
+      box-shadow: none;
+    }
+    input[type=range]::-moz-range-thumb {
+      width: 10px; height: 18px; border-radius: 0;
+      background: var(--ink); border: 1px solid #140800;
+      box-shadow: none;
+    }
+    .status { font-size: .9rem; color: var(--ink-dim); min-height: 1.2rem; }
+    .status.ok { color: var(--ink-dim); }
+    .status.err { color: var(--danger); }
+    .list {
+      font-size: .9rem;
+      color: var(--ink-dim);
+      margin: .6rem 0 0;
+      text-align: center;
+    }
+    #pickerWrap { text-align: left; }
+    .term-select { position: relative; }
+    .term-select-btn {
+      width: 100%;
+      text-align: left;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+      background: #090400;
+      color: var(--ink);
+      border: 1px solid var(--line);
+      padding: .65rem .7rem;
+    }
+    .term-select-btn::after {
+      content: " v";
+      float: right;
+      color: var(--ink-dim);
+    }
+    .term-select.open .term-select-btn { border-color: var(--ink); }
+    .term-menu {
+      display: none;
+      position: absolute;
+      left: 0; right: 0; top: 100%;
+      z-index: 8;
+      background: #090400;
+      border: 1px solid var(--ink);
+      max-height: 14rem;
+      overflow: auto;
+    }
+    .term-select.open .term-menu { display: block; }
+    .term-menu button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+      border: 0;
+      border-bottom: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink);
+      padding: .55rem .7rem;
+    }
+    .term-menu button:last-child { border-bottom: 0; }
+    .term-menu button.on, .term-menu button:hover {
+      background: var(--ink);
+      color: #140800;
+      text-shadow: none;
+    }
+    footer.bar {
+      position: fixed; left: 0; right: 0; bottom: 0;
+      padding: .6rem 1rem calc(.6rem + env(safe-area-inset-bottom));
+      background: #070300;
+      border-top: 1px solid var(--line);
+      display: flex; justify-content: center;
+    }
+    footer.bar button,
+    footer.bar button:hover,
+    footer.bar button:not(:disabled) {
+      width: 100%;
+      max-width: calc(42rem - 2rem);
+      background: var(--ink);
+      color: #140800;
+      border: 1px solid var(--line);
+      box-shadow: 0 0 12px rgba(255,176,0,.45);
+      letter-spacing: .04em;
+    }
+    .hidden { display: none !important; }
+    ::selection { background: var(--ink); color: #140800; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>PONY.SYS // DUSTY STAMP</h1>
+    <p class="sub">BIO READY. OUTFIT READY. STAMP READY.</p>
+  </header>
+  <main>
+    <div class="tabs">
+      <button type="button" class="on" data-tab="edit">BIO</button>
+      <button type="button" data-tab="stamp">STAMP</button>
+      <button type="button" data-tab="outfit">OUTFIT</button>
+    </div>
+    <p class="status" id="status">WAITING FOR INPUT.</p>
+
+    <section id="tab-edit">
+      <div class="drop" id="drop-edit" data-slot="edit">Drop an export here
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload<input id="file-edit" type="file" accept=".txt,text/plain"></label></div>
+        <p class="list" id="list-edit"></p>
+      </div>
+      <div class="field hidden" id="pickerWrap">
+        <span>Character in file</span>
+        <div class="term-select" id="picker">
+          <button type="button" class="term-select-btn" id="pickerBtn">SELECT</button>
+          <div class="term-menu" id="pickerMenu"></div>
+        </div>
+      </div>
+      <div id="editor" class="hidden">
+        <div class="card">
+          <label class="field"><span>Name</span><input id="name" type="text" maxlength="32"></label>
+          <label class="field"><span>Tags / description</span><input id="tags" type="text" placeholder="@0 #oc"></label>
+        </div>
+        <div class="card">
+          <label class="field"><span>Race</span><input id="race" type="text"></label>
+          <label class="field"><span>Faction</span><input id="faction" type="text"></label>
+          <label class="field"><span>Profession</span><input id="profession" type="text"></label>
+          <label class="field"><span>Hometown</span><input id="hometown" type="text"></label>
+          <label class="field"><span>Description</span><textarea id="description"></textarea></label>
+          <label class="field"><span>Traits</span><textarea id="traits"></textarea></label>
+          <label class="field"><span>History</span><textarea id="history"></textarea></label>
+          <label class="field"><span>Age</span><input id="age" type="number" min="0" max="255"></label>
+        </div>
+        <div class="card">
+          <span class="special-title">SPECIAL (1-10)</span>
+          <div class="special" id="special"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tab-outfit" class="hidden">
+      <div class="drop" id="drop-bases" data-slot="bases">Bases (one or many files)
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload bases<input id="file-bases" type="file" accept=".txt,text/plain" multiple></label></div>
+        <p class="list" id="list-bases"></p>
+      </div>
+      <div class="drop" id="drop-outfit" data-slot="outfit">Outfit source (one file)
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload outfit<input id="file-outfit" type="file" accept=".txt,text/plain"></label></div>
+        <p class="list" id="list-outfit"></p>
+      </div>
+    </section>
+
+    <section id="tab-stamp" class="hidden">
+      <p class="sub">Uses the bio in Edit bio, or a donor file if you upload one.</p>
+      <div class="drop" id="drop-stamp-bases" data-slot="stampBases">Characters to stamp
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload bases<input id="file-stamp-bases" type="file" accept=".txt,text/plain" multiple></label></div>
+        <p class="list" id="list-stamp-bases"></p>
+      </div>
+      <div class="drop" id="drop-stamp-bio" data-slot="stampBio">Optional bio donor
+        <div style="margin-top:.6rem;"><label class="file-btn">Upload donor<input id="file-stamp-bio" type="file" accept=".txt,text/plain"></label></div>
+        <p class="list" id="list-stamp-bio"></p>
+      </div>
+    </section>
+  </main>
+  <footer class="bar">
+    <button id="download" type="button" disabled>WRITE FILE</button>
+  </footer>
+  <script src="app.min.js"></script>
+</body>
+</html>
