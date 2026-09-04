@@ -206,22 +206,28 @@
       text-shadow: none;
     }
     .chk {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 1.6rem;
+      height: 1.6rem;
+      flex: 0 0 1.6rem;
+      box-sizing: border-box;
       margin-right: .35rem;
       border: 1px solid var(--line);
       background: #090400;
       color: var(--ink);
-      text-align: center;
       font: inherit;
       font-weight: 700;
-      padding: 0 .15rem;
+      padding: 0;
       cursor: pointer;
       text-transform: none;
       letter-spacing: 0;
-      line-height: 1.35;
+      line-height: 1;
     }
+    .chk::before { content: "X"; visibility: hidden; }
     .chk.on { border-color: var(--ink); }
+    .chk.on::before { visibility: visible; }
     .field-head { display: flex; align-items: center; margin-bottom: .25rem; }
     .field-head span { margin-bottom: 0 !important; }
     .conflict-row {
@@ -234,6 +240,11 @@
       font-size: .88rem;
     }
     .conflict-row:last-child { border-bottom: 0; }
+    .identity-block {
+      margin-top: .55rem;
+      padding-top: .45rem;
+      border-top: 1px solid var(--ink);
+    }
     .conflict-row .name { color: var(--ink); }
     .radio {
       border: 1px solid var(--line);
@@ -253,11 +264,19 @@
     }
     footer.bar {
       position: fixed; left: 0; right: 0; bottom: 0;
-      padding: .6rem 1rem calc(.6rem + env(safe-area-inset-bottom));
+      padding: .45rem 1rem calc(.6rem + env(safe-area-inset-bottom));
       background: #070300;
       border-top: 1px solid var(--line);
-      display: flex; justify-content: center;
+      display: flex; flex-direction: column; align-items: center;
     }
+    #dryrun {
+      width: 100%;
+      max-width: calc(42rem - 2rem);
+      margin: 0 0 .35rem;
+      text-align: center;
+      color: var(--ink-dim);
+    }
+    #applyClothesAll, #applyIdentAll { margin: .45rem 0 .6rem; }
     footer.bar button,
     footer.bar button:hover,
     footer.bar button:not(:disabled) {
@@ -287,7 +306,10 @@
 
     <section id="tab-edit">
       <div class="drop" id="drop-edit" data-slot="edit">Optional: load a bio donor to edit
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload donor<input id="file-edit" type="file" accept=".txt,text/plain"></label></div>
+        <div style="margin-top:.6rem;">
+          <label class="file-btn">Upload donor<input id="file-edit" type="file" accept=".txt,text/plain"></label>
+          <button type="button" class="file-btn" id="clear-edit" style="margin-left:.4rem;">Clear</button>
+        </div>
         <p class="list" id="list-edit"></p>
       </div>
       <div class="field hidden" id="pickerWrap">
@@ -304,33 +326,70 @@
           <label class="field"><div class="field-head"><button type="button" class="chk" data-check="tags"></button><span>Tags / description</span></div><input id="tags" type="text" placeholder="@0 #oc"></label>
         </div>
         <div class="card">
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="race">X</button><span>Race</span></div><input id="race" type="text"></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="faction">X</button><span>Faction</span></div><input id="faction" type="text"></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="profession">X</button><span>Profession</span></div><input id="profession" type="text"></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="hometown">X</button><span>Hometown</span></div><input id="hometown" type="text"></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="description">X</button><span>Description</span></div><textarea id="description"></textarea></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="traits">X</button><span>Traits</span></div><textarea id="traits"></textarea></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="history">X</button><span>History</span></div><textarea id="history"></textarea></label>
-          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="age">X</button><span>Age</span></div><input id="age" type="number" min="0" max="255"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="race"></button><span>Race</span></div><input id="race" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="faction"></button><span>Faction</span></div><input id="faction" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="profession"></button><span>Profession</span></div><input id="profession" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="hometown"></button><span>Hometown</span></div><input id="hometown" type="text"></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="description"></button><span>Description</span></div><textarea id="description"></textarea></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="traits"></button><span>Traits</span></div><textarea id="traits"></textarea></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="history"></button><span>History</span></div><textarea id="history"></textarea></label>
+          <label class="field"><div class="field-head"><button type="button" class="chk on" data-check="age"></button><span>Age</span></div><input id="age" type="number" min="0" max="255"></label>
         </div>
         <div class="card">
-          <div class="field-head"><button type="button" class="chk on" data-check="special">X</button><span class="special-title">SPECIAL (1-10)</span></div>
+          <div class="field-head"><button type="button" class="chk on" data-check="special"></button><span class="special-title">SPECIAL (1-10)</span></div>
           <div class="special" id="special"></div>
         </div>
       </div>
       <div class="drop" id="drop-stamp-bases" data-slot="stampBases">Stamp onto these characters (one or many files)
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload bases<input id="file-stamp-bases" type="file" accept=".txt,text/plain" multiple></label></div>
+        <div style="margin-top:.6rem;">
+          <label class="file-btn">Upload bases<input id="file-stamp-bases" type="file" accept=".txt,text/plain" multiple></label>
+          <button type="button" class="file-btn" id="clear-stamp" style="margin-left:.4rem;">Clear</button>
+        </div>
         <p class="list" id="list-stamp-bases"></p>
+      </div>
+      <div class="card hidden" id="stampPickCard">
+        <span class="special-title">CHARACTERS IN FILE</span>
+        <p class="sub" id="stampPickSummary"></p>
+        <button type="button" class="radio" id="stampLimitBtn">LIMIT CHARACTERS</button>
+        <div id="stampLimitPanel" class="hidden">
+          <label class="field"><span>Filter by name</span><input id="stampFilter" type="text" placeholder="type to list matches"></label>
+          <div class="conflict-row">
+            <div class="name">Selection</div>
+            <button type="button" class="radio" id="stampAll">ALL</button>
+            <button type="button" class="radio" id="stampNone">NONE</button>
+          </div>
+          <div id="stampPickList"></div>
+        </div>
       </div>
     </section>
 
     <section id="tab-outfit" class="hidden">
       <div class="drop" id="drop-bases" data-slot="bases">Bases (one or many files)
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload bases<input id="file-bases" type="file" accept=".txt,text/plain" multiple></label></div>
+        <div style="margin-top:.6rem;">
+          <label class="file-btn">Upload bases<input id="file-bases" type="file" accept=".txt,text/plain" multiple></label>
+          <button type="button" class="file-btn" id="clear-bases" style="margin-left:.4rem;">Clear</button>
+        </div>
         <p class="list" id="list-bases"></p>
       </div>
+      <div class="card hidden" id="outfitPickCard">
+        <span class="special-title">CHARACTERS IN FILE</span>
+        <p class="sub" id="outfitPickSummary"></p>
+        <button type="button" class="radio" id="outfitLimitBtn">LIMIT CHARACTERS</button>
+        <div id="outfitLimitPanel" class="hidden">
+          <label class="field"><span>Filter by name</span><input id="outfitFilter" type="text" placeholder="type to list matches"></label>
+          <div class="conflict-row">
+            <div class="name">Selection</div>
+            <button type="button" class="radio" id="outfitAll">ALL</button>
+            <button type="button" class="radio" id="outfitNone">NONE</button>
+          </div>
+          <div id="outfitPickList"></div>
+        </div>
+      </div>
       <div class="drop" id="drop-outfit" data-slot="outfit">Outfit source (one file)
-        <div style="margin-top:.6rem;"><label class="file-btn">Upload outfit<input id="file-outfit" type="file" accept=".txt,text/plain"></label></div>
+        <div style="margin-top:.6rem;">
+          <label class="file-btn">Upload outfit<input id="file-outfit" type="file" accept=".txt,text/plain"></label>
+          <button type="button" class="file-btn" id="clear-outfit" style="margin-left:.4rem;">Clear</button>
+        </div>
         <p class="list" id="list-outfit"></p>
       </div>
       <div class="field hidden" id="outfitPickerWrap">
@@ -340,14 +399,39 @@
           <div class="term-menu" id="outfitPickerMenu"></div>
         </div>
       </div>
+      <div class="field hidden" id="outfitSrcWrap">
+        <span>Outfit character</span>
+        <div class="term-select" id="outfitSrcPicker">
+          <button type="button" class="term-select-btn" id="outfitSrcBtn">SELECT</button>
+          <div class="term-menu" id="outfitSrcMenu"></div>
+        </div>
+      </div>
       <div class="card hidden" id="conflictCard">
         <span class="special-title">SLOT CONFLICTS</span>
-        <p class="sub">Base occupies this slot. Outfit default wins.</p>
+        <p class="sub">Clothes / armor / accessories. Default OUTFIT.</p>
+        <div class="conflict-row">
+          <div class="name">This card</div>
+          <button type="button" class="radio" id="clothesAllBase">BASE</button>
+          <button type="button" class="radio on" id="clothesAllOutfit">OUTFIT</button>
+        </div>
+        <button type="button" class="radio hidden" id="applyClothesAll">APPLY CLOTHES MAP TO ALL</button>
         <div id="conflictList"></div>
+      </div>
+      <div class="card hidden" id="identityCard">
+        <span class="special-title">IDENTITY SLOTS</span>
+        <p class="sub">Body / mane / face / hooves. Default BASE.</p>
+        <div class="conflict-row">
+          <div class="name">This card</div>
+          <button type="button" class="radio on" id="identAllBase">BASE</button>
+          <button type="button" class="radio" id="identAllOutfit">OUTFIT</button>
+        </div>
+        <button type="button" class="radio hidden" id="applyIdentAll">APPLY IDENTITY MAP TO ALL</button>
+        <div id="identityList"></div>
       </div>
     </section>
   </main>
   <footer class="bar">
+    <p class="list" id="dryrun"></p>
     <button id="download" type="button" disabled>WRITE FILE</button>
   </footer>
   <script src="app.min.js"></script>
