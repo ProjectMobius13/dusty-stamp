@@ -124,18 +124,22 @@
       -webkit-appearance: none;
       appearance: none;
       width: 100%;
-      height: 8px;
+      height: 18px;
       margin: 0;
-      background: #090400;
-      border: 1px solid var(--line);
+      background: transparent;
+      border: 0;
       outline: none;
     }
     input[type=range]::-webkit-slider-runnable-track {
-      height: 6px; background: #090400;
+      width: 100%;
+      height: 6px;
+      background: #090400;
       border: 1px solid var(--line);
     }
     input[type=range]::-moz-range-track {
-      height: 6px; background: #090400;
+      width: 100%;
+      height: 6px;
+      background: #090400;
       border: 1px solid var(--line);
     }
     input[type=range]::-webkit-slider-thumb {
@@ -322,7 +326,7 @@
 <body>
   <header>
     <h1>PONY.SYS // DUSTY STAMP</h1>
-    <p class="sub">BATCH EDIT CHARACTER BIO AND OUTFIT <a href="https://projectmobius13.github.io/dusty-combat/" style="color:inherit">DUSTY COMBAT</a></p>
+    <p class="sub">BATCH EDIT CHARACTER BIO AND OUTFIT. <a href="https://projectmobius13.github.io/dusty-combat/" style="color:inherit">DUSTY COMBAT</a></p>
   </header>
   <main>
     <div class="tabs">
@@ -461,6 +465,8 @@
     <p class="list" id="dryrun"></p>
     <button id="download" type="button" disabled>WRITE FILE</button>
   </footer>
-  <script src="app.min.js"></script>
+  <script src="pony-bio.js"></script>
+  <script src="pony-info.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
